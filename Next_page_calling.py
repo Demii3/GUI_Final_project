@@ -1,8 +1,8 @@
-import Next_Page_class_2
+import Next_Page_class
 import GUI_Class_file
 import sqlite3
-# Chanel Tibo
-proj = Next_Page_class_2.Our_project()
+
+proj = Next_Page_class.Our_project()
 proj2 = GUI_Class_file.MyGui2()
 root = proj.root_lvl1_(800, 600)
 root.geometry("670x900+1200+50")
@@ -71,6 +71,13 @@ def clear():
     entries_in_create_account[6].configure(state= 'readonly')
     username.delete(0, 'end')
     password.delete(0, 'end')
+    username_forgor.delete(0, 'end')
+    email_.delete(0, 'end')
+    new_password.delete(0, 'end')
+    confirm_new_password.delete(0, 'end')
+    new_password.configure(state='readonly')
+    confirm_new_password.configure(state='readonly')
+    message_info_4.configure(text= '*', fg= 'black')
 
 def confirm():
     if currency_entry.get() == '' or float(currency_entry.get()) - float(num * int(no_of_tix.get())) < 0:
@@ -158,9 +165,9 @@ def update_change_2(event):
 def check_password_validity(event):
     entries_in_create_account[6].configure(state= 'normal')
     if entries_in_create_account[6].get() != entries_in_create_account[5].get():
-        message_info_3.configure(text= "Password Mismatch", font= ('Times New Roman', 10, 'italic'), fg= 'red')
+        message_info_3.configure(text= "Password Mismatch", font= ('helvetica', 10, 'italic'), fg= 'red')
     else:
-        message_info_3.configure(text="Password Match", font=('Times New Roman', 10, 'italic'), fg='green')
+        message_info_3.configure(text="Password Match", font=('helvetica', 10, 'italic'), fg='green')
 
 def confirm_2():
     if currency_entry_2.get() == '' or float(currency_entry_2.get()) - float(num_2 * int(no_of_tix_2.get())) < 0:
@@ -177,6 +184,41 @@ def confirm_2():
         message_status_2.configure(text="*")
         clear()
         proj.other_page(home_page_frame)
+
+def search_username():
+    command = ("SELECT Email "
+               "FROM Use_Information "
+               f"WHERE Username_ == '{str(username_forgor.get())}'")
+    ok1 = proj2.cursor_database("OOP_Final_projectDB", command)
+    print(ok1[0])
+    if email_.get() != ok1[0]:
+        proj2.create_messagebox("Error", "Username's Email does not match")
+    else:
+        proj2.create_messagebox("Update", "Email does match")
+        new_password.configure(state= 'normal')
+        confirm_new_password.configure(state= 'normal')
+
+def check_password_validity_2(event):
+    if new_password.get() != confirm_new_password.get():
+        message_info_4.configure(text= "Password Mismatch", font= ('helvetica', 10, 'italic'), fg= 'red')
+    else:
+        message_info_4.configure(text="Password Match", font=('helvetica', 10, 'italic'), fg='green')
+
+def confirm_3():
+    if new_password.get() != confirm_new_password.get():
+        message_status_2.configure(text="* Password mismatch, cannot proceed", fg='red')
+    else:
+        if new_password.get() == '' and confirm_new_password.get() == '':
+            proj2.create_messagebox("Error", 'Password field unfilled')
+            message_info_4.configure(text= 'Password unfilled', fg= 'red')
+        else:
+            command = ("""UPDATE Use_Information SET Password = ? WHERE Username_ = ?""",
+                       ((str(new_password.get())), str(username_forgor.get())))
+            proj2.cursor_database2("OOP_Final_projectDB", command)
+            message_info_4.configure(text='*', fg='black')
+            proj2.create_messagebox("Update", "Password Changed Successfully")
+            proj.other_page(home_page_frame)
+
 
 # ______________________________FUNCTIONS____________________________________
 
@@ -262,7 +304,7 @@ create_user_frame.configure(font= ('helvetica', 15, 'bold'))
 mini_frames = []
 for i in range(9):
     frame = proj2.create_frame(one_time_ticket_purchase, None,
-                               x, 0, 15, 15, 10, 10, 'w')
+                               x, 0, 15, 15, 10, 10, 'n')
     x += 1
     mini_frames.append(frame)
     if len(mini_frames) == 9:
@@ -344,59 +386,59 @@ create_account_button.configure(font= ('helvetica', 12, 'bold'), command= lambda
 options = ["Station -4","Station -3","Station -2","Station -1","Station 0","Station 1","Station 2", "Station 3",
            "Station 4"]
 current_station_label = proj2.create_label(mini_frames[0], "You're in: Station 0",
-                                           0, 0, 1, 0, 0, 0, 0,'w')
-current_station_label.configure(font= ('helvetica', 15))
+                                           0, 0, 1, 0, 90, 10, 0,'w')
+current_station_label.configure(font= ('helvetica', 18, 'bold'))
 station_option = proj2.create_combobox_with_label(mini_frames[1], 'Your Destination: ', 'helvetica',
                                                   15, '', options, None, 15,0, 0, 1, 0,
-                                                  10, 10, 0, 0, 'n')
+                                                  10, 130, 0, 0, 'w')
 station_option.configure(font=('helvetica', 15))
 station_option.current(4)
 station_option.bind("<<ComboboxSelected>>", station_selected_and_fare)
 
 journey = proj2.create_label(mini_frames[2], "Journey: ",
-                                           0, 0, 1, 0, 0, 0, 0,'news')
+                                           0, 0, 1, 0, 230, 0, 0,'news')
 journey.configure(font= ('helvetica', 15))
 from_station = proj2.create_label(mini_frames[9], "From: Station 0",
-                                           0, 0, 1, 0, 0, 0, 0,'news')
+                                           0, 0, 1, 0, 200, 0, 0,'news')
 from_station.configure(font= ('helvetica', 12))
 to_station = proj2.create_label(mini_frames[9], "To: Station 0",
-                                           1, 0, 1, 0, 0, 0, 0,'news')
+                                           1, 0, 1, 0, 220, 0, 0,'news')
 to_station.configure(font= ('helvetica', 12))
 
-fare = proj2.create_entry_with_label(mini_frames[3], 'Fare: ', 'helvetica', 15, '', None, 10,
-                                           0, 0, 1, 0, 20, 20, 0, 0, 'n')
+fare = proj2.create_entry_with_label(mini_frames[3], 'Fare: ', 'helvetica', 15, '', None, 8,
+                                           0, 0, 1, 0, 0, 220, 0, 0, 'w')
 fare.insert(0, "$ 0")
 fare.configure(font= ('helvetica', 15), state= 'readonly')
 
-no_of_tix = proj2.create_spinbox_with_label(mini_frames[4], 'Number of Tickets: ', 'helvetica', 15, '', None, 1, 10, 10,
-                                           0, 0, 1, 0, 0, 0, 0, 0, 'n')
+no_of_tix = proj2.create_spinbox_with_label(mini_frames[4], 'Number of Tickets: ', 'helvetica', 15, '', None, 1, 10, 8,
+                                           0, 0, 1, 0, 0, 140, 0, 0, 'w')
 no_of_tix.configure(font=('helvetica', 15), command= update_amount)
 total_amount_label = proj2.create_label(mini_frames[5], "Total Amount: ",
                                            0, 0, 1, 0, 0, 0, 0,'w')
 total_amount_label.configure(font=('helvetica', 15))
 total_amount_indicator = proj2.create_label(mini_frames[5], "$ 0",
-                                           0, 1, 1, 0, 0, 0, 0,'w')
+                                           0, 3, 1, 0, 160, 0, 0,'w')
 total_amount_indicator.configure(font=('helvetica', 15))
 currency_entry = proj2.create_entry_with_label(mini_frames[6], "Enter Currency Amount: ", 'helvetica', 15, '', None, 10,
-                                           0, 0, 1, 0, 0, 0, 0, 0, 'n')
+                                           0, 0, 1, 0, 0, 100, 0, 0, 'w')
 currency_entry.configure(font=('helvetica', 15))
 currency_entry.bind('<KeyRelease>', update_change)
 change_label = proj2.create_label(mini_frames[7], "Change: ",
                                            0, 0, 1, 0, 0, 0, 0,'w')
 change_label.configure(font=('helvetica', 15))
 change_indicator = proj2.create_label(mini_frames[7], "$ 0",
-                                           0, 1, 1, 0, 0, 0, 0,'w')
+                                           0, 1, 1, 0, 210, 0, 0,'w')
 message_status = proj2.create_label(mini_frames[7], '*', 1, 0, 2, 0, 0, 0, 0, 'w')
 change_indicator.configure(font=('helvetica', 15))
 
-return_button_1 = proj.button(mini_frames[8], 'Return', 15, 1,
-                            0, 0, 0, 0, 0, 0, None, None)
+return_button_1 = proj.button(mini_frames[8], 'Return', 15, 2,
+                            0, 0, 0, 0, 0, 0, '#1181C8', 'white')
 return_button_1.configure(command= lambda :(clear(), proj.other_page(home_page_frame)))
-clear_button = proj.button(mini_frames[8], 'Clear', 15, 1,
-                            0, 1, 10, 10, 0, 0, None, None)
+clear_button = proj.button(mini_frames[8], 'Clear', 15, 2,
+                            0, 1, 10, 10, 0, 0, '#00A8A8', 'white')
 clear_button.configure(command= clear)
-confirm_button = proj.button(mini_frames[8], 'Confirm', 15, 1,
-                            0, 2, 0, 0, 0, 0, None, None)
+confirm_button = proj.button(mini_frames[8], 'Confirm', 15, 2,
+                            0, 2, 0, 0, 0, 0, '#209B3D', 'white')
 confirm_button.configure(command=confirm)
 # ___________________________________LVL 2: Contents seen in buy_ticket_onetime_frame_________________________________________________
 
@@ -446,13 +488,13 @@ message_info_3 = proj2.create_label(mini_frames_2[3], '*', 0, 2, 1, 0, 0, 0, 0, 
 
 
 return_button_2 = proj.button(mini_frames_2[4], 'Return', 15, 1,
-                            0, 0, 0, 10, 0, 0, None, None)
+                            0, 0, 0, 10, 0, 0, '#1181C8', 'white')
 return_button_2.configure(command= lambda :(clear() ,proj.other_page(home_page_frame)))
 clear_button_2 = proj.button(mini_frames_2[4], 'Clear', 15, 1,
-                             0, 1, 0, 0, 0, 0,None, None)
+                             0, 1, 0, 0, 0, 0, '#00A8A8', 'white')
 clear_button_2.configure(command= clear)
 save_button = proj.button(mini_frames_2[4], 'Create Account', 15, 1,
-                          0, 3, 10, 0, 0, 0, None, None)
+                          0, 3, 10, 0, 0, 0, '#209B3D', 'white')
 save_button.configure(command= save_new_user)
 # ___________________________________LVL 2: Contents seen in create_account_frame_________________________________________________
 
@@ -463,15 +505,15 @@ username = proj2.create_entry_with_label(mini_frames_3[1], 'Username: ', 'helvet
 password = proj2.create_entry_with_label(mini_frames_3[2], 'Password: ', 'helvetica', 15, '',
                                          None, 20, 1, 0, 1, 1, 0, 0, 0, 0, 'w')
 password.configure(show= '*')
-log_in = proj.button(mini_frames_3[3], 'Log in', 15, 1, 0, 0, 0, 0 ,0, 0, None, None)
+log_in = proj.button(mini_frames_3[5], 'Log in', 15, 1, 0, 0, 130, 0 ,0, 0, '#209B3D', 'white')
 log_in.configure(command= login)
-forgor_password = proj2.create_label(mini_frames_3[4], 'Forgot Password?',
-                                     0, 0, 1, 0, 0, 0, 0, 'w')
+forgor_password = proj2.create_label(mini_frames_3[3], 'Forgot Password?',
+                                     0, 0, 1, 100, 0, 0, 0, 'w')
 forgor_password.configure(cursor= 'hand2')
 forgor_password.bind('<Button-1>', forgot_password)
 
-return_button_3 = proj.button(mini_frames_3[6], 'Return', 15, 1,
-                              0, 0, 0, 0, 0, 0, None, None)
+return_button_3 = proj.button(mini_frames_3[5], 'Return', 15, 1,
+                              0, 0, 0, 130, 0, 0, '#1181C8', 'white')
 return_button_3.configure(command= lambda :(clear(), proj.other_page(home_page_frame)))
 # ___________________________________LVL 2: Contents seen in buy_ticket_as_user_frame_________________________________________________
 
@@ -542,15 +584,28 @@ confirm_button_2.configure(command= confirm_2)
 
 # ___________________________________LVL 2: Contents seen in forgot_password_frame_________________________________________________
 email_ = proj2.create_entry_with_label(mini_frames_5[1], 'Email: ', 'helvetica', 15, '', None,
-                                       25, 0, 0, 0, 1, 0, 0, 0, 0, 'w')
+                                       25, 1, 0, 1, 1, 0, 0, 0, 0, 'w')
 username_forgor = proj2.create_entry_with_label(mini_frames_5[1], 'Username: ', 'helvetica', 15, '', None,
-                                       25, 1, 0, 1, 1, 0, 0, 10, 0, 'w')
+                                       25, 0, 0, 0, 1, 0, 0, 10, 0, 'w')
 new_password = proj2.create_entry_with_label(mini_frames_5[2], 'New Password: ', 'helvetica', 12, '',
                                          None, 20, 0, 0, 0, 1, 0, 0, 0, 0, 'w')
 confirm_new_password = proj2.create_entry_with_label(mini_frames_5[2], 'Confirm New Password: ', 'helvetica', 12, '',
                                          None, 20, 1, 0, 1, 1, 0, 0, 10, 0, 'w')
-return_button_5 = proj.button(mini_frames_5[3], 'Return', 15, 1, 1, 0, 0, 0, 10, 0, None, None)
-return_button_5.configure(command= lambda :(proj.other_page(home_page_frame)))
+new_password.configure(state= 'readonly')
+confirm_new_password.configure(state= 'readonly')
+new_password.bind('<KeyRelease>', check_password_validity_2)
+confirm_new_password.bind('<KeyRelease>', check_password_validity_2)
+
+return_button_5 = proj.button(mini_frames_5[3], 'Return', 15, 1, 0, 0, 0, 10, 10, 0, None, None)
+return_button_5.configure(command= lambda :(clear(), proj.other_page(home_page_frame)))
+
+search = proj.button(mini_frames_5[3], 'Search User', 15, 1, 0, 1, 0, 0, 10, 0, None, None)
+search.configure(command= search_username)
+
+confirm_button_3 = proj.button(mini_frames_5[3], 'Confirm', 15, 1, 0, 2, 10, 0, 10, 0, None, None)
+confirm_button_3.configure(command= lambda :(confirm_3()))
+
+message_info_4 = proj.label(mini_frames_5[4], '*', 0, 0)
 # ___________________________________LVL 2: Contents seen in forgot_password_frame_________________________________________________
 
 # ___________________________________LVL 2:_________________________________________________
