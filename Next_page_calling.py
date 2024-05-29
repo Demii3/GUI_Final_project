@@ -103,10 +103,10 @@ def save_new_user():
                     proj2.create_messagebox("Error", "Username Already exists")
 
             except TypeError:
-                fields = ["First_name, Middle_name, Last_name, Username_, Email, Password"]
+                fields = ["First_name, Middle_name, Last_name, Username_, Email, Password, User_total_points"]
                 values = ("'" + entries_in_create_account[0].get() + "','" + entries_in_create_account[1].get() + "',"
                           "'" +entries_in_create_account[2].get() + "','" + entries_in_create_account[3].get() + "',"
-                          "'" +entries_in_create_account[4].get() + "','" + entries_in_create_account[5].get() + "'")
+                          "'" +entries_in_create_account[4].get() + "','" + entries_in_create_account[5].get() + "', '"+str(0)+"'")
                 proj2.save_data_into_database("OOP_Final_projectDB", "Use_Information", fields[0], values)
                 proj2.create_messagebox("Success", "Account Created Successfully")
                 proj.other_page(home_page_frame)
